@@ -51,9 +51,4 @@ index aplication
 ```
 file to handle routes that the system will take 
 ``` 
-
-{
-  "name": "cra-template-template-react-ferraresi",
-  "version": "0.1.5",
-  "license": "MIT"
-}
+ 
