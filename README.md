@@ -55,12 +55,18 @@ file to handle routes that the system will take
 ### MODULES DEFAULT
 
 ** 
-    -DEPENDENCIES
-  "antd": "^4.1.4"
-  "axios": "^0.19.2"
-  "react-router-dom": "^5.1.2"
+    -DEPENDENCIES 
+    
+```
+    "antd": "^4.1.4"
+    "axios": "^0.19.2"
+    "react-router-dom": "^5.1.2"
+``` 
+  
     
     -DEV DEPENDENCIES
+    
+```
    "babel-eslint": "^10.1.0"
    "eslint": "^6.8.0"
    "eslint-config-airbnb": "^18.1.0"
@@ -71,4 +77,6 @@ file to handle routes that the system will take
    "eslint-plugin-react": "^7.19.0"
    "eslint-plugin-react-hooks": "^2.5.1"
    "prettier": "^2.0.5"  
+``` 
+
 **
