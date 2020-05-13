@@ -1,28 +1,29 @@
 import React from 'react';
 import { Row, Col, Button } from 'antd';
 
-import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import Header from '../../components/Header';
+import CapturaCamera from './CapturaCamera';
 
-import logo from '../../assets/Images/logo.svg';
 import './styles.css';
 
 export default function App() {
     return (
         <Row className="App">
-            <Col span={8}>session01 col-8</Col>
-            <Col span={8}>
+            <Col span={24}>
+                <Header />
+            </Col>
+            <Col offset={1} span={22} style={{}}>
                 <Row>
-                    <Col span={24}>
-                        <input src={logo} className="App-logo" alt="logo-main" type="image" />
+                    <Col>
+                        <CapturaCamera />
                     </Col>
                     <Col span={24}>
                         <Button type="primary" block>
-                            TEMPLATE REACT FELIPE1181
+                            CONTEUDO DO SITE
                         </Button>
                     </Col>
                 </Row>
             </Col>
-            <Col span={8}>session03 col-8</Col>
         </Row>
     );
 }
