@@ -1,0 +1,23 @@
+.content-login{
+    height: 30%;
+    margin-top: 7em;
+    background-color: #fff;
+    overflow: hidden;
+    border-radius: 5px;
+    -webkit-box-shadow: 3px 3px 21px -6px rgba(0,0,0,0.38);
+    -moz-box-shadow: 3px 3px 21px -6px rgba(0,0,0,0.38);
+    box-shadow: 3px 3px 21px -6px rgba(0,0,0,0.38);
+}
+.header-login{
+    margin-top: -9em;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    padding-bottom: 10px;
+}
+.header-login span{
+    font-size: 30px;
+}
+.header-login span b{
+    color:#f98a31;
+}
