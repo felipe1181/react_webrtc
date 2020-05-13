@@ -1,11 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import 'antd/dist/antd.css';
 import './index.css';
-import Login from './pages/Login';
+
+import App from './App';
 
 ReactDOM.render(
     <React.StrictMode>
-        <Login />
+        <App />
     </React.StrictMode>,
     global.document.getElementById('root')
 );
