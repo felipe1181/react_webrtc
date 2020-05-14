@@ -92,6 +92,8 @@ function CapturaCamera() {
         start();
     }, []);
 
+    const media = new MediaSource();
+
     useEffect(function startSocket() {
         async function start() {
             try {
@@ -99,10 +101,14 @@ function CapturaCamera() {
                 socketClient.on('connection', (data) => {
                     console.log(data);
                 });
+                
                 socketClient.on('broadcast', async (databroadcast) => {
-                    const blob = new Blob([databroadcast], { type: 'video/webm' });
-                    const buf = await blob.arrayBuffer();
-                    URL.setStreamReceived(URL.createObjectURL(new Blob([buf])));
+                    // const blob = new Blob([databroadcast], { type: 'video/webm' });
+                    /* const buf = await blob.arrayBuffer();
+                    URL.setStreamReceived(URL.createObjectURL(new Blob([buf]))); */
+                    // const streamTest = await blob.stream();
+                    media.addSourceBuffer(databroadcast);
+                    setStreamReceived(URL.createObjectURL(media));
                 });
                 setSocket(socketClient);
             } catch (err) {

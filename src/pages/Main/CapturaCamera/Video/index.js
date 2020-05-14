@@ -13,7 +13,12 @@ function Video(props) {
             <Row>
                 <Col className="player-video-record">
                     {src && <ReactPlayer url={src} playing />}
-                    {buffer && <ReactPlayer url={buffer} />}
+                    {buffer && (
+                        <ReactPlayer
+                            progressInterval={10000}
+                            url={[{ src: buffer, type: 'video/webm' }]}
+                        />
+                    )}
                 </Col>
             </Row>
         </>
