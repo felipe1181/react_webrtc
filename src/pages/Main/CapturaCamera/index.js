@@ -19,10 +19,9 @@ function CapturaCamera() {
     const [mediaRecorder, setMediaRecorder] = useState({});
     const [recordedBlobs, setRecordedBlobs] = useState([]);
 
-    function handleDataAvailable(event) {
-        console.log('handleDataAvailable', event);
+    function handleDataDisponivel(event) {
+        console.log('handleDataDisponivel', event);
         if (event.data && event.data.size > 0) {
-            // recordedBlobs.push(event.data);
             setRecordedBlobs((recordblob) => {
                 return [...recordblob, event.data];
             });
@@ -42,17 +41,16 @@ function CapturaCamera() {
             const options = { mimeType: 'video/webm;codecs=vp9' };
             try {
                 const media = new MediaRecorder(stream, options);
-                console.log('media', media);
                 media.onstop = (event) => {
-                    console.log('Recorder stopped: ', event);
-                    console.log('Recorded Blobs: ', recordedBlobs);
+                    console.log('Parar gravação: ', event);
+                    console.log('Blobs gravados: ', recordedBlobs);
                 };
-                media.ondataavailable = handleDataAvailable;
-                media.start(10); // collect 10ms of data
+                media.ondataavailable = handleDataDisponivel;
+                media.start(10); // coletar 10ms de dados
                 setMediaRecorder(media);
-                console.log('MediaRecorder started', mediaRecorder);
+                console.log('MediaRecorder iniciado!', mediaRecorder);
             } catch (e) {
-                console.error('Exception while creating MediaRecorder:', e);
+                console.error('error:', e);
             }
         } else {
             mediaRecorder.stop();
