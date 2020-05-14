@@ -48,7 +48,7 @@ const Login = () => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Jardel da cu!',
+                                        message: 'Preencha o usuário!',
                                     },
                                 ]}
                             >
@@ -60,7 +60,7 @@ const Login = () => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Please input your password!',
+                                        message: 'Preencha uma senha!',
                                     },
                                 ]}
                             >
