@@ -15,7 +15,7 @@ export default function App() {
             <Divider />
             <Col offset={1} span={22} style={{}}>
                 <Row>
-                    <Col span={8}>
+                    <Col span={12}>
                         <CapturaCamera />
                     </Col>
                     <Divider />

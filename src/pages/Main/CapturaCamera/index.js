@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Button } from 'antd';
-import Video from './Video';
+import socketIOClient from 'socket.io-client';
 
+import { Row, Col, Button } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+
+import Video from './Video';
 import './styles.css';
 
 function CapturaCamera() {
@@ -12,59 +15,55 @@ function CapturaCamera() {
 
     const [disabledButton, setDisabledButton] = useState({
         camera: false,
-        gravar: false,
-        download: false,
+        streaming: false,
     });
     const [stream, setStream] = useState(null);
-    const [mediaRecorder, setMediaRecorder] = useState({});
+    const [streamReceived, setStreamReceived] = useState(null);
+    const [socket, setSocket] = useState({});
+    const [mediaRecorder, setMediaRecorder] = useState(null);
     const [recordedBlobs, setRecordedBlobs] = useState([]);
 
+    const ENDPOINT = 'http://127.0.0.1:3001';
+
     function handleDataDisponivel(event) {
-        console.log('handleDataDisponivel', event);
         if (event.data && event.data.size > 0) {
-            setRecordedBlobs((recordblob) => {
-                return [...recordblob, event.data];
-            });
+            socket.emit('clienteResponse', event.data);
         }
     }
 
-    async function handleIniciarGravacao() {
-        const isCamera = disabledButton.gravar ? !disabledButton.camera : disabledButton.camera;
-        setDisabledButton({
-            ...disabledButton,
-            gravar: !disabledButton.gravar,
-            camera: isCamera,
-            download: !isCamera,
-        });
-        if (!disabledButton.gravar) {
-            setRecordedBlobs([]);
-            const options = { mimeType: 'video/webm;codecs=vp9' };
+    function handleIniciarStreaming() {
+        if (disabledButton.streaming) {
             try {
-                const media = new MediaRecorder(stream, options);
-                media.onstop = (event) => {
-                    console.log('Parar gravação: ', event);
-                    console.log('Blobs gravados: ', recordedBlobs);
-                };
-                media.ondataavailable = handleDataDisponivel;
-                media.start(10); // coletar 10ms de dados
-                setMediaRecorder(media);
-                console.log('MediaRecorder iniciado!', mediaRecorder);
-            } catch (e) {
-                console.error('error:', e);
+                mediaRecorder.stop();
+                setDisabledButton({
+                    ...disabledButton,
+                    streaming: !disabledButton.streaming,
+                });
+            } catch (err) {
+                console.log(err);
             }
-        } else {
-            mediaRecorder.stop();
+            return;
         }
-    }
 
-    function handleFazerDownload() {
-        if (!disabledButton.download || stream === null || !recordedBlobs.length) return;
-        const blob = new Blob(recordedBlobs, { type: 'video/webm' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${new Date()}_teste.webm`;
-        a.click();
+        setRecordedBlobs([]);
+        const options = { mimeType: 'video/webm;codecs=vp9' };
+        try {
+            const media = new MediaRecorder(stream, options);
+            media.onstop = (event) => {
+                console.log('Parar gravação: ', event);
+                console.log('Blobs gravados: ', recordedBlobs);
+            };
+            media.ondataavailable = handleDataDisponivel;
+            media.start(1000); // coletar 10ms de dados
+            setMediaRecorder(media);
+            setDisabledButton({
+                ...disabledButton,
+                streaming: !disabledButton.streaming,
+            });
+            console.log('MediaRecorder iniciado!', mediaRecorder);
+        } catch (e) {
+            console.error('error:', e);
+        }
     }
 
     function handleSuccess(streamDevice) {
@@ -74,51 +73,63 @@ function CapturaCamera() {
         setStream(streamDevice);
     }
 
-    useEffect(async function init() {
-        try {
-            // pedir permissão da câmera
-            const streamDevice = await navigator.mediaDevices.getUserMedia(constraints);
+    useEffect(function initMain() {
+        async function start() {
+            try {
+                // pedir permissão da câmera
+                const streamDevice = await navigator.mediaDevices.getUserMedia(constraints);
 
-            handleSuccess(streamDevice);
+                handleSuccess(streamDevice);
 
-            setDisabledButton({
-                ...disabledButton,
-                camera: !disabledButton.camera,
-            });
-        } catch (err) {
-            console.log(err);
+                setDisabledButton({
+                    ...disabledButton,
+                    camera: !disabledButton.camera,
+                });
+            } catch (err) {
+                console.log(err);
+            }
         }
+        start();
     }, []);
 
+    useEffect(function startSocket() {
+        async function start() {
+            try {
+                const socketClient = await socketIOClient(ENDPOINT);
+                socketClient.on('connection', (data) => {
+                    console.log(data);
+                });
+                socketClient.on('broadcast', async (databroadcast) => {
+                    const blob = new Blob([databroadcast], { type: 'video/webm' });
+                    const buf = await blob.arrayBuffer();
+                    URL.setStreamReceived(URL.createObjectURL(new Blob([buf])));
+                });
+                setSocket(socketClient);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        start();
+    }, []);
     return (
         <>
             <Row>
-                <Col span={24} className="camera-video-recording">
+                <Col span={12} className="camera-video-recording">
                     <Video src={stream} />
-                    {disabledButton.camera && (
+                    {disabledButton.streaming && (
                         <Button type="danger" className="aovivo-video-recording">
-                            <b>o</b>Ao vivo
+                            <LoadingOutlined /> Ao vivo
                         </Button>
                     )}
+                </Col>
+                <Col span={12} className="camera-video-recording">
+                    <Video buffer={streamReceived} />
                 </Col>
                 <Col span={24}>
                     <Row>
                         <Col span={12}>
-                            <Button
-                                disabled={!disabledButton.camera}
-                                onClick={handleIniciarGravacao}
-                                block
-                            >
-                                {!disabledButton.gravar ? 'Iniciar gravação' : 'Parar'}
-                            </Button>
-                        </Col>
-                        <Col span={12}>
-                            <Button
-                                disabled={!disabledButton.download}
-                                onClick={handleFazerDownload}
-                                block
-                            >
-                                Fazer Download
+                            <Button onClick={handleIniciarStreaming} block>
+                                {!disabledButton.streaming ? 'Iniciar gravação' : 'Parar'}
                             </Button>
                         </Col>
                     </Row>
