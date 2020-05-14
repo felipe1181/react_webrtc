@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Button } from 'antd';
+import { Row, Col, Button, Divider } from 'antd';
 
 import Header from '../../components/Header';
 import CapturaCamera from './CapturaCamera';
@@ -12,11 +12,13 @@ export default function App() {
             <Col span={24}>
                 <Header />
             </Col>
+            <Divider />
             <Col offset={1} span={22} style={{}}>
                 <Row>
-                    <Col>
+                    <Col span={8}>
                         <CapturaCamera />
                     </Col>
+                    <Divider />
                     <Col span={24}>
                         <Button type="primary" block>
                             CONTEUDO DO SITE
