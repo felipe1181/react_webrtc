@@ -1,0 +1,16 @@
+.camera-video-recording{
+    height: 250px;
+    border: 2px  #ccc;
+    border-style: dashed;
+}
+.aovivo-video-recording{
+    position: absolute;
+    top:0;
+    margin: 5px;
+}
+.aovivo-video-recording b{
+    height: 1px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+}

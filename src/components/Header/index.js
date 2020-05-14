@@ -24,7 +24,7 @@ function Header() {
     }
     function handlerSair() {
         localStorage.removeItem('user');
-        history.push('/login');
+        history.push('/');
     }
     function toggleCollapsed() {
         const valueMax = 190;
