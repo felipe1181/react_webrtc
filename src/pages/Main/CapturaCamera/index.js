@@ -21,6 +21,7 @@ function CapturaCamera() {
     const [streamReceived, setStreamReceived] = useState(null);
     const [socket, setSocket] = useState({});
     const [mediaRecorder, setMediaRecorder] = useState(null);
+
     const [recordedBlobs, setRecordedBlobs] = useState([]);
 
     const ENDPOINT = 'http://127.0.0.1:3001';
@@ -54,7 +55,7 @@ function CapturaCamera() {
                 console.log('Blobs gravados: ', recordedBlobs);
             };
             media.ondataavailable = handleDataDisponivel;
-            media.start(1000); // coletar 10ms de dados
+            media.start(100); // coletar 100ms de dados
             setMediaRecorder(media);
             setDisabledButton({
                 ...disabledButton,
@@ -92,8 +93,6 @@ function CapturaCamera() {
         start();
     }, []);
 
-    const media = new MediaSource();
-
     useEffect(function startSocket() {
         async function start() {
             try {
@@ -101,16 +100,24 @@ function CapturaCamera() {
                 socketClient.on('connection', (data) => {
                     console.log(data);
                 });
-                
-                socketClient.on('broadcast', async (databroadcast) => {
-                    // const blob = new Blob([databroadcast], { type: 'video/webm' });
-                    /* const buf = await blob.arrayBuffer();
-                    URL.setStreamReceived(URL.createObjectURL(new Blob([buf]))); */
-                    // const streamTest = await blob.stream();
-                    media.addSourceBuffer(databroadcast);
-                    setStreamReceived(URL.createObjectURL(media));
-                });
+
                 setSocket(socketClient);
+                /**
+                 * TO-DO CORREÇÕES:
+                 * - MELHORAR QUESTÃO DO DELAY
+                 * - CORRIGIR PROBLEMA DE PARAR/VOLTAR TRANSMISSÃO
+                 * - REFATORAR CODIGO E DEIXA-LO MENOR
+                 */
+                const mediaSource = new MediaSource();
+                setStreamReceived(window.URL.createObjectURL(mediaSource));
+                mediaSource.addEventListener('sourceopen', () => {
+                    const sourceBuffer = mediaSource.addSourceBuffer('video/webm;codecs=vp9');
+                    socketClient.on('broadcast', (data) => {
+                        if (!sourceBuffer.updating) {
+                            sourceBuffer.appendBuffer(data);
+                        }
+                    });
+                });
             } catch (err) {
                 console.log(err);
             }
