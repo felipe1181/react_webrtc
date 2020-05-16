@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Button, Divider } from 'antd';
 
 import Header from '../../components/Header';
-import CapturaCamera from './CapturaCamera';
+import StreamingWebRTC from './StreamingWebRTC';
 
 import './styles.css';
 
@@ -16,7 +16,7 @@ export default function App() {
             <Col offset={1} span={22} style={{}}>
                 <Row>
                     <Col span={12}>
-                        <CapturaCamera />
+                        <StreamingWebRTC />
                     </Col>
                     <Divider />
                     <Col span={24}>
