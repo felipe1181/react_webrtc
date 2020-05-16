@@ -7,7 +7,6 @@ import './styles.css';
 function Video(props) {
     const { src } = props;
     const { buffer } = props;
-    console.log('buffer:', buffer);
     return (
         <>
             <Row>
